@@ -287,6 +287,11 @@
       i = 0,
       j = 0;
 
+    if (prev && prev.path === ctx.path) {
+      ctx.handled = false;
+      return;
+    }
+
     prevContext = ctx;
 
     function nextExit() {
