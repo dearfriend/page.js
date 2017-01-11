@@ -551,6 +551,8 @@
   /**
    * Handle "click" events.
    */
+  
+  var hasProcess = new Function('return typeof process')() !== 'undefined';
 
   function onclick(e) {
 
@@ -595,7 +597,7 @@
     var path = el.pathname + el.search + (el.hash || '');
 
     // strip leading "/[drive letter]:" on NW.js on Windows
-    if (typeof process !== 'undefined' && path.match(/^\/[a-zA-Z]:\//)) {
+    if (hasProcess && path.match(/^\/[a-zA-Z]:\//)) {
       path = path.replace(/^\/[a-zA-Z]:\//, '/');
     }
 
