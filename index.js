@@ -117,6 +117,12 @@
   page.current = '';
 
   /**
+   * Previous path processed
+   * @type {String}
+   */
+  page.previous = '';
+
+  /**
    * Number of pages navigated to.
    * @type {number}
    *
@@ -176,6 +182,7 @@
 
   page.stop = function() {
     if (!running) return;
+    page.previous = page.current;
     page.current = '';
     page.len = 0;
     running = false;
@@ -196,6 +203,7 @@
 
   page.show = function(path, state, dispatch, push) {
     var ctx = new Context(path, state);
+    page.previous = page.current;
     page.current = ctx.path;
     if (false !== dispatch) page.dispatch(ctx);
     if (false !== ctx.handled && false !== push) ctx.pushState();
@@ -269,6 +277,7 @@
 
   page.replace = function(path, state, init, dispatch) {
     var ctx = new Context(path, state);
+    page.previous = page.current;
     page.current = ctx.path;
     ctx.init = init;
     ctx.save(); // save before dispatching, which may redirect
