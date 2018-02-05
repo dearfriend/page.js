@@ -32,6 +32,8 @@
 
   var dispatch = true;
 
+  var hasHistory = ('undefined' !== typeof history);
+
 
   /**
    * Decode URL components (query string, pathname, hash).
@@ -162,9 +164,10 @@
     options = options || {};
     if (running) return;
     running = true;
+    if (true === options.virtualOnly) hasHistory = false;
     if (false === options.dispatch) dispatch = false;
     if (false === options.decodeURLComponents) decodeURLComponents = false;
-    if (false !== options.popstate) window.addEventListener('popstate', onpopstate, false);
+    if (false !== options.popstate && hasHistory) window.addEventListener('popstate', onpopstate, false);
     if (false !== options.click) {
       document.addEventListener(clickEvent, onclick, false);
     }
@@ -187,7 +190,9 @@
     page.len = 0;
     running = false;
     document.removeEventListener(clickEvent, onclick, false);
-    window.removeEventListener('popstate', onpopstate, false);
+    if (hasHistory) {
+      window.removeEventListener('popstate', onpopstate, false);
+    }
   };
 
   /**
@@ -223,7 +228,7 @@
     if (page.len > 0) {
       // this may need more testing to see if all browsers
       // wait for the next tick to go back in history
-      history.back();
+      hasHistory && history.back();
       page.len--;
     } else if (path) {
       setTimeout(function() {
@@ -430,7 +435,9 @@
 
   Context.prototype.pushState = function() {
     page.len++;
-    history.pushState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+    if (hasHistory) {
+      history.pushState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+    }
   };
 
   /**
@@ -440,7 +447,9 @@
    */
 
   Context.prototype.save = function() {
-    history.replaceState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+    if (hasHistory) {
+      history.replaceState(this.state, this.title, hashbang && this.path !== '/' ? '#!' + this.path : this.canonicalPath);
+    }
   };
 
   /**
